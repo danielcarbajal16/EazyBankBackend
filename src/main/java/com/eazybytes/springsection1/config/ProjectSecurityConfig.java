@@ -1,5 +1,6 @@
 package com.eazybytes.springsection1.config;
 
+import com.eazybytes.springsection1.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -15,12 +16,11 @@ public class ProjectSecurityConfig {
         http.csrf(csrf -> csrf.disable())
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount", "myLoans", "/myCards", "myBalance").authenticated()
+                .requestMatchers("/myAccount", "myLoans", "/myCards", "/myBalance").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register").permitAll());
         http.formLogin(Customizer.withDefaults());
         //http.formLogin(login -> login.disable());
-        http.httpBasic(Customizer.withDefaults());
-        //http.httpBasic(hbc -> hbc.disable());
+        http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
 
         return http.build();
     }
