@@ -14,10 +14,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         LocalDateTime currentTimeStamp = LocalDateTime.now();
-        String message = (accessDeniedException != null && accessDeniedException.getMessage() != null) ? accessDeniedException.getMessage() : "Access Denied";
+        String message = (accessDeniedException != null && accessDeniedException.getMessage() != null) ? accessDeniedException.getMessage() : "Authorization failed";
         String path = request.getRequestURI();
 
-        response.setHeader("eazybank-denied-reason", "Access Denied");
+        response.setHeader("eazybank-denied-reason", "Authorization Failed");
         response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
         response.setContentType("application/json;charset=UTF-8");
 

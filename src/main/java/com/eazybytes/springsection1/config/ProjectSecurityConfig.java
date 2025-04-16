@@ -16,6 +16,7 @@ public class ProjectSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
+            .sessionManagement(smc -> smc.maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/myAccount", "myLoans", "/myCards", "/myBalance").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register").permitAll());
