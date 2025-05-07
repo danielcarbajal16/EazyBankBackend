@@ -17,6 +17,7 @@ public class ProjectSecurityConfig {
         http.csrf(csrf -> csrf.disable())
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .sessionManagement(smc -> smc
+                //.sessionFixation(sfc -> sfc.none()) // This line helps you to configure how to act when session fixation attacks happen
                 .invalidSessionUrl("/invalidSession")
                 .maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
