@@ -23,7 +23,7 @@ public class ProjectSecurityConfig {
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register", "/invalidSession").permitAll());
-        http.formLogin(Customizer.withDefaults());
+        http.formLogin(flc -> flc.defaultSuccessUrl("/myAccount"));
         //http.formLogin(login -> login.disable());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
