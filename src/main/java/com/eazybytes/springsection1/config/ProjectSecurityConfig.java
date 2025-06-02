@@ -2,12 +2,17 @@ package com.eazybytes.springsection1.config;
 
 import com.eazybytes.springsection1.exceptionhandling.CustomAccessDeniedHandler;
 import com.eazybytes.springsection1.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 public class ProjectSecurityConfig {
@@ -26,6 +31,18 @@ public class ProjectSecurityConfig {
         //http.formLogin(login -> login.disable());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
         http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
+        http.cors(corsConfigurer -> corsConfigurer.configurationSource(new CorsConfigurationSource() {
+            @Override
+            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                CorsConfiguration corsConfiguration = new CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+                corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+                corsConfiguration.setAllowCredentials(true);
+                corsConfiguration.setMaxAge(3600L);
+                return corsConfiguration;
+            }
+        }));
 
         return http.build();
     }
