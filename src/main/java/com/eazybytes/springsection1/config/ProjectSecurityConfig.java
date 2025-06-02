@@ -20,7 +20,7 @@ public class ProjectSecurityConfig {
                 .invalidSessionUrl("/invalidSession")
                 .maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance").authenticated()
+                .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register", "/invalidSession").permitAll());
         http.formLogin(flc -> flc.defaultSuccessUrl("/myAccount"));
         //http.formLogin(login -> login.disable());
