@@ -3,7 +3,7 @@ package com.eazybytes.springsection1.controller;
 import com.eazybytes.springsection1.model.Contact;
 import com.eazybytes.springsection1.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +15,7 @@ import java.util.Random;
 public class ContactController {
     private final ContactRepository repository;
 
-    @GetMapping("/contact")
+    @PostMapping("/contact")
     public Contact saveContactInquiryDetails(@RequestBody Contact contact) {
         contact.setContactId(getServiceRequiredNumber());
         contact.setCreateDt(new Date(System.currentTimeMillis()));

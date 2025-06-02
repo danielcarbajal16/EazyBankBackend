@@ -7,11 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -21,13 +23,18 @@ import java.util.Collections;
 public class ProjectSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+        CsrfTokenRequestAttributeHandler csrfTokenRequestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        http.csrf(csrf -> csrf
+                .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler)
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .securityContext(contextConfigurer -> contextConfigurer.requireExplicitSave(false))
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .sessionManagement(smc -> smc
                 //.sessionFixation(sfc -> sfc.none()) // This line helps you to configure how to act when session fixation attacks happen
-                .invalidSessionUrl("/invalidSession")
-                .maximumSessions(1).maxSessionsPreventsLogin(true))
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                //.invalidSessionUrl("/invalidSession")
+                //.maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register", "/invalidSession").permitAll());

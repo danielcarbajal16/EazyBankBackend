@@ -13,7 +13,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "contact")
+@Table(name = "contact_messages")
 public class Contact {
     @Id
     @Column(name = "contact_id")
