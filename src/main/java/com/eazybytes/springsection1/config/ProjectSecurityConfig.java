@@ -37,7 +37,11 @@ public class ProjectSecurityConfig {
                 //.invalidSessionUrl("/invalidSession")
                 //.maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user").authenticated()
+                .requestMatchers("/myAccount").hasAuthority("VIEWACCOUNT")
+                .requestMatchers("/myLoans").hasAuthority("VIEWLOANS")
+                .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
+                .requestMatchers("/myBalance").hasAuthority("VIEWBALANCE")
+                .requestMatchers("/user").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register", "/invalidSession").permitAll());
         http.formLogin(flc -> flc.defaultSuccessUrl("/myAccount"));
         //http.formLogin(login -> login.disable());
