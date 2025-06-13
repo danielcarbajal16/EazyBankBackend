@@ -2,7 +2,9 @@ package com.eazybytes.springsection1.config;
 
 import com.eazybytes.springsection1.exceptionhandling.CustomAccessDeniedHandler;
 import com.eazybytes.springsection1.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import com.eazybytes.springsection1.filter.AuthoritiesLoggingAfterFilter;
 import com.eazybytes.springsection1.filter.CsrfCookieFilter;
+import com.eazybytes.springsection1.filter.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,8 @@ public class ProjectSecurityConfig {
                 .ignoringRequestMatchers("/contact", "/register")
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+            .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
+            .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
             .securityContext(contextConfigurer -> contextConfigurer.requireExplicitSave(false))
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .sessionManagement(smc -> smc
