@@ -3,6 +3,7 @@ package com.eazybytes.springsection1.config;
 import com.eazybytes.springsection1.exceptionhandling.CustomAccessDeniedHandler;
 import com.eazybytes.springsection1.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import com.eazybytes.springsection1.filter.AuthoritiesLoggingAfterFilter;
+import com.eazybytes.springsection1.filter.AuthoritiesLoggingAtFilter;
 import com.eazybytes.springsection1.filter.CsrfCookieFilter;
 import com.eazybytes.springsection1.filter.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class ProjectSecurityConfig {
             .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
             .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
             .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
+            .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
             .securityContext(contextConfigurer -> contextConfigurer.requireExplicitSave(false))
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .sessionManagement(smc -> smc
