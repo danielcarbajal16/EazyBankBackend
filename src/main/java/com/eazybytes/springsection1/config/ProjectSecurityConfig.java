@@ -2,10 +2,7 @@ package com.eazybytes.springsection1.config;
 
 import com.eazybytes.springsection1.exceptionhandling.CustomAccessDeniedHandler;
 import com.eazybytes.springsection1.exceptionhandling.CustomBasicAuthenticationEntryPoint;
-import com.eazybytes.springsection1.filter.AuthoritiesLoggingAfterFilter;
-import com.eazybytes.springsection1.filter.AuthoritiesLoggingAtFilter;
-import com.eazybytes.springsection1.filter.CsrfCookieFilter;
-import com.eazybytes.springsection1.filter.RequestValidationBeforeFilter;
+import com.eazybytes.springsection1.filter.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,11 +32,12 @@ public class ProjectSecurityConfig {
             .addFilterBefore(new RequestValidationBeforeFilter(), BasicAuthenticationFilter.class)
             .addFilterAfter(new AuthoritiesLoggingAfterFilter(), BasicAuthenticationFilter.class)
             .addFilterAt(new AuthoritiesLoggingAtFilter(), BasicAuthenticationFilter.class)
-            .securityContext(contextConfigurer -> contextConfigurer.requireExplicitSave(false))
+            .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+            .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
             //.requiresChannel(rcf -> rcf.anyRequest().requiresInsecure()) // This is to allow http requests, to allow https requests change this to rcf.anyRequest().requiresSecure()
             .sessionManagement(smc -> smc
                 //.sessionFixation(sfc -> sfc.none()) // This line helps you to configure how to act when session fixation attacks happen
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 //.invalidSessionUrl("/invalidSession")
                 //.maximumSessions(1).maxSessionsPreventsLogin(true))
             .authorizeHttpRequests((requests) -> requests
@@ -64,6 +62,7 @@ public class ProjectSecurityConfig {
                 corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
                 corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
                 corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+                corsConfiguration.setExposedHeaders(Collections.singletonList("Authorization"));
                 corsConfiguration.setAllowCredentials(true);
                 corsConfiguration.setMaxAge(3600L);
                 return corsConfiguration;
