@@ -49,7 +49,7 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/myCards").hasAuthority("VIEWCARDS")
                 .requestMatchers("/myBalance").hasAuthority("VIEWBALANCE")*/
                 .requestMatchers("/myAccount").hasRole("USER")
-                .requestMatchers("/myLoans").hasRole("USER")
+                .requestMatchers("/myLoans").authenticated()
                 .requestMatchers("/myCards").hasRole("USER")
                 .requestMatchers("/myBalance").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/user").authenticated()
