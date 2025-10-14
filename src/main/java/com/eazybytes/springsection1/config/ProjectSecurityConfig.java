@@ -3,6 +3,7 @@ package com.eazybytes.springsection1.config;
 import com.eazybytes.springsection1.exceptionhandling.CustomAccessDeniedHandler;
 import com.eazybytes.springsection1.filter.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +20,15 @@ import java.util.Collections;
 
 @Configuration
 public class ProjectSecurityConfig {
+    @Value("${spring.security.oauth2.resourceserver.opaque.introspection-uri}")
+    String instrospectionUri;
+
+    @Value("${spring.security.oauth2.resourceserver.opaque.introspection-client-id}")
+    String clientId;
+
+    @Value("${spring.security.oauth2.resourceserver.opaque.introspection-client-secret}")
+    String clientSecret;
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
@@ -39,7 +49,11 @@ public class ProjectSecurityConfig {
                 .requestMatchers("/user").authenticated()
                 .requestMatchers("/notices", "/contact", "/error", "/register").permitAll());
         http.formLogin(flc -> flc.defaultSuccessUrl("/myAccount"));
-        http.oauth2ResourceServer(rsc -> rsc.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter)));
+        /*http.oauth2ResourceServer(rsc -> rsc.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter)));*/
+        http.oauth2ResourceServer(rsc -> rsc.opaqueToken(otc -> otc
+            .authenticationConverter(new KeyCloakOpaqueRoleConverter())
+            .introspectionUri(instrospectionUri)
+            .introspectionClientCredentials(clientId, clientSecret)));
         http.exceptionHandling(ehc -> ehc.accessDeniedHandler(new CustomAccessDeniedHandler()));
         http.cors(corsConfigurer -> corsConfigurer.configurationSource(new CorsConfigurationSource() {
             @Override
