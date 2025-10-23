@@ -8,21 +8,19 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class KeyCloakRoleConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
     @Override
     @SuppressWarnings("unchecked")
     public Collection<GrantedAuthority> convert(Jwt source) {
-        Map<String, Object> realmAccess = (Map<String, Object>) source.getClaims().get("realm_access");
+        List<String> roles = (ArrayList<String>) source.getClaims().get("scope");
 
-        if (realmAccess == null || realmAccess.isEmpty()) {
+        if (roles == null || roles.isEmpty()) {
             return new ArrayList<>();
         }
 
-        return ((List<String>) realmAccess.get("roles"))
-            .stream()
+        return roles.stream()
             .map(roleName -> "ROLE_" + roleName)
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
