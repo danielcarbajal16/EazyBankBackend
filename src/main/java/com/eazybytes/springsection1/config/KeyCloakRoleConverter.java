@@ -14,7 +14,7 @@ public class KeyCloakRoleConverter implements Converter<Jwt, Collection<GrantedA
     @Override
     @SuppressWarnings("unchecked")
     public Collection<GrantedAuthority> convert(Jwt source) {
-        List<String> roles = (ArrayList<String>) source.getClaims().get("scope");
+        List<String> roles = (ArrayList<String>) source.getClaims().get("roles");
 
         if (roles == null || roles.isEmpty()) {
             return new ArrayList<>();
